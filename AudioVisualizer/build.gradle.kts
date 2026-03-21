@@ -69,7 +69,7 @@ dependencies {
 // -----------------------------------------------------------------------
 // Maven publishing configuration
 //
-// Group    : com.sre-0.audiovisualizer
+// Group    : com.sre404.audiovisualizer
 // Artifact : Audio-Visualizer
 // Version  : injected at build time via -Pversion_name=X.X.X
 // -----------------------------------------------------------------------
@@ -80,7 +80,7 @@ afterEvaluate {
 
                 from(components["release"])
 
-                groupId    = "com.sre-0.audiovisualizer"
+                groupId    = "com.sre404.audiovisualizer"
                 artifactId = "Audio-Visualizer"
                 version    = project.findProperty("version_name")?.toString() ?: "1.0.0"
 
