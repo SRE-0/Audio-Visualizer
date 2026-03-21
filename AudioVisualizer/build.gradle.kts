@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
@@ -43,6 +44,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    // Required so maven-publish can locate the release component
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -53,4 +61,22 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+// -----------------------------------------------------------------------
+// Minimal Maven publishing block — only needed so JitPack can find
+// the POM and register the artifact in its Maven repository.
+// No credentials or repository URL needed here.
+// -----------------------------------------------------------------------
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId    = "com.github.SRE-0"
+                artifactId = "Audio-Visualizer"
+                version    = project.findProperty("version_name")?.toString() ?: "1.0.0"
+            }
+        }
+    }
 }

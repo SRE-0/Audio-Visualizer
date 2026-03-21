@@ -5,4 +5,5 @@ before_install:
   - sdk install java 17.0.0-open
 
 install:
+  - echo "y" | sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
   - ./gradlew :audiovisualizer:assembleRelease
