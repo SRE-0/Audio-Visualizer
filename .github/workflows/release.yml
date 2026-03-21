@@ -58,13 +58,17 @@ jobs:
       - name: Build release AAR
         run: ./gradlew :audiovisualizer:assembleRelease --no-daemon --stacktrace
 
+      # -----------------------------------------------------------------------
+      # Publish to GitHub Packages
+      # GITHUB_TOKEN is used as the password — the username is hardcoded
+      # in build.gradle.kts to avoid case sensitivity issues with GITHUB_ACTOR
+      # -----------------------------------------------------------------------
       - name: Publish to GitHub Packages
         run: |
           ./gradlew :audiovisualizer:publishReleasePublicationToGitHubPackagesRepository \
             --no-daemon \
             -Pversion_name=${{ steps.version.outputs.version }}
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename AAR with version
@@ -75,7 +79,7 @@ jobs:
             exit 1
           fi
           echo "Found AAR at: ${AAR_PATH}"
-          NEW_NAME="flux-audiovisualizer-${{ steps.version.outputs.version }}.aar"
+          NEW_NAME="audiovisualizer-${{ steps.version.outputs.version }}.aar"
           cp "${AAR_PATH}" "${NEW_NAME}"
           echo "aar_file=${NEW_NAME}" >> $GITHUB_ENV
 
@@ -96,10 +100,11 @@ jobs:
                   mavenCentral()
                   maven {
                       name = "GitHubPackages"
-                      url  = uri("https://maven.pkg.github.com/sre-0/flux-audiovisualizer")
+                      url  = uri("https://maven.pkg.github.com/SRE-0/Audio-Visualizer")
                       credentials {
-                          username = providers.gradleProperty("gpr.user").orNull
+                          username = "YOUR_GITHUB_USERNAME"
                           password = providers.gradleProperty("gpr.key").orNull
+                                     ?: System.getenv("GITHUB_TOKEN")
                       }
                   }
               }
@@ -108,12 +113,11 @@ jobs:
           Step 2 - Add the dependency to your build.gradle.kts:
 
           dependencies {
-              implementation("com.sre404.audiovisualizer:flux-audiovisualizer:${{ steps.version.outputs.version }}")
+              implementation("com.sre404.audiovisualizer:audiovisualizer:${{ steps.version.outputs.version }}")
           }
 
-          Step 3 - Add your credentials to ~/.gradle/gradle.properties (never commit this file):
+          Step 3 - Add your token to ~/.gradle/gradle.properties (never commit this file):
 
-          gpr.user=YOUR_GITHUB_USERNAME
           gpr.key=YOUR_GITHUB_PERSONAL_ACCESS_TOKEN
 
           The token needs the read:packages scope.
@@ -121,12 +125,12 @@ jobs:
 
           ### Option 2 - Manual AAR import
 
-          1. Download flux-audiovisualizer-${{ steps.version.outputs.version }}.aar
+          1. Download audiovisualizer-${{ steps.version.outputs.version }}.aar
           2. Copy it to your app libs/ folder
           3. Add to your build.gradle.kts:
 
           dependencies {
-              implementation(files("libs/flux-audiovisualizer-${{ steps.version.outputs.version }}.aar"))
+              implementation(files("libs/audiovisualizer-${{ steps.version.outputs.version }}.aar"))
           }
 
           ### Commit

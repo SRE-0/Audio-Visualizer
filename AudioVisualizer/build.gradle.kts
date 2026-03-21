@@ -5,8 +5,6 @@ plugins {
 
 android {
     namespace = "com.sre404.audiovisualizer"
-
-    // compileSdk with preview API syntax requires AGP 8.7+
     compileSdk = 36
 
     defaultConfig {
@@ -25,7 +23,6 @@ android {
         }
     }
 
-    // Single externalNativeBuild block — was duplicated before
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
@@ -70,8 +67,9 @@ dependencies {
 // Maven publishing configuration
 //
 // Group    : com.sre404.audiovisualizer
-// Artifact : Audio-Visualizer
+// Artifact : audiovisualizer  (no hyphens — GitHub Packages requirement)
 // Version  : injected at build time via -Pversion_name=X.X.X
+// URL      : must match the exact GitHub repo name (case sensitive)
 // -----------------------------------------------------------------------
 afterEvaluate {
     publishing {
@@ -80,15 +78,16 @@ afterEvaluate {
 
                 from(components["release"])
 
+                // No hyphens allowed in artifactId for GitHub Packages
                 groupId    = "com.sre404.audiovisualizer"
-                artifactId = "Audio-Visualizer"
+                artifactId = "audiovisualizer"
                 version    = project.findProperty("version_name")?.toString() ?: "1.0.0"
 
                 pom {
-                    name        = "AudioVisualizer"
+                    name        = "Flux AudioVisualizer"
                     description = "Real-time audio visualization library for Android. " +
                             "Native C++ DSP pipeline with FFT and volume modes."
-                    url         = "https://github.com/sre-0/Audio-Visualizer"
+                    url         = "https://github.com/SRE-0/Audio-Visualizer"
 
                     licenses {
                         license {
@@ -99,16 +98,16 @@ afterEvaluate {
 
                     developers {
                         developer {
-                            id   = "sre-0"
-                            name = "sre-0"
-                            url  = "https://github.com/sre-0"
+                            id   = "SRE-0"
+                            name = "SRE-0"
+                            url  = "https://github.com/SRE-0"
                         }
                     }
 
                     scm {
-                        connection          = "scm:git:git://github.com/sre-0/Audio-Visualizer.git"
-                        developerConnection = "scm:git:ssh://github.com/sre-0/Audio-Visualizer.git"
-                        url                 = "https://github.com/sre-0/Audio-Visualizer"
+                        connection          = "scm:git:git://github.com/SRE-0/Audio-Visualizer.git"
+                        developerConnection = "scm:git:ssh://github.com/SRE-0/Audio-Visualizer.git"
+                        url                 = "https://github.com/SRE-0/Audio-Visualizer"
                     }
                 }
             }
@@ -117,11 +116,14 @@ afterEvaluate {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url  = uri("https://maven.pkg.github.com/sre-0/Audio-Visualizer")
+
+                // Exact repo URL — case sensitive, must match GitHub exactly
+                url = uri("https://maven.pkg.github.com/SRE-0/Audio-Visualizer")
 
                 credentials {
-                    username = project.findProperty("gpr.user")?.toString()
-                        ?: System.getenv("GITHUB_ACTOR")
+                    // GITHUB_ACTOR is injected by the Action as lowercase
+                    // so we hardcode the username to avoid case mismatch
+                    username = "SRE-0"
                     password = project.findProperty("gpr.key")?.toString()
                         ?: System.getenv("GITHUB_TOKEN")
                 }
