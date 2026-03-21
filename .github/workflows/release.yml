@@ -1,4 +1,4 @@
-name: Build and Release AAR
+name: Build, Publish and Release
 
 on:
   push:
@@ -7,8 +7,12 @@ on:
 
 jobs:
   release:
-    name: Build AAR and create GitHub Release
+    name: Build, publish to GitHub Packages and create Release
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
 
     steps:
 
@@ -42,20 +46,6 @@ jobs:
       - name: Grant Gradle wrapper permissions
         run: chmod +x gradlew
 
-      # -----------------------------------------------------------------------
-      # Debug: show project structure so we can verify module name and location
-      # -----------------------------------------------------------------------
-      - name: Show project structure
-        run: |
-          echo "=== Root directory ==="
-          ls -la
-          echo ""
-          echo "=== settings.gradle.kts ==="
-          cat settings.gradle.kts || cat settings.gradle || echo "settings file not found"
-          echo ""
-          echo "=== Gradle modules ==="
-          ./gradlew projects --no-daemon 2>&1 | head -40
-
       - name: Generate version name
         id: version
         run: |
@@ -65,32 +55,25 @@ jobs:
           echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
           echo "Version: ${VERSION}"
 
-      # -----------------------------------------------------------------------
-      # Build with full stacktrace so any Gradle error is visible
-      # -----------------------------------------------------------------------
       - name: Build release AAR
         run: ./gradlew :audiovisualizer:assembleRelease --no-daemon --stacktrace
 
-      # -----------------------------------------------------------------------
-      # Debug: show everything under build/ to find the actual AAR path
-      # -----------------------------------------------------------------------
-      - name: Show build outputs
+      - name: Publish to GitHub Packages
         run: |
-          echo "=== Build outputs ==="
-          find . -name "*.aar" 2>/dev/null || echo "No AAR files found"
+          ./gradlew :audiovisualizer:publishReleasePublicationToGitHubPackagesRepository \
+            --no-daemon \
+            -Pversion_name=${{ steps.version.outputs.version }}
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # -----------------------------------------------------------------------
-      # Locate the AAR dynamically — works regardless of exact subfolder
-      # -----------------------------------------------------------------------
       - name: Rename AAR with version
         run: |
           AAR_PATH=$(find . -name "*.aar" -path "*/outputs/aar/*" | head -1)
-
           if [ -z "${AAR_PATH}" ]; then
-            echo "ERROR: No AAR file found after build"
+            echo "ERROR: No AAR file found"
             exit 1
           fi
-
           echo "Found AAR at: ${AAR_PATH}"
           NEW_NAME="flux-audiovisualizer-${{ steps.version.outputs.version }}.aar"
           cp "${AAR_PATH}" "${NEW_NAME}"
@@ -101,13 +84,54 @@ jobs:
           cat > release_notes.md << 'NOTES'
           ## Flux AudioVisualizer ${{ steps.version.outputs.version }}
 
-          ### What's included
-          - `flux-audiovisualizer-${{ steps.version.outputs.version }}.aar` — compiled Android library
+          Published to GitHub Packages. Import directly in any Android project.
 
-          ### How to use
-          1. Download the `.aar` file
-          2. Copy it to your app's `libs/` folder
-          3. Add to your `build.gradle.kts`:
+          ### Option 1 - Gradle import (recommended)
+
+          Step 1 - Add the repository to your settings.gradle.kts:
+
+          dependencyResolutionManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  maven {
+                      name = "GitHubPackages"
+                      url  = uri("https://maven.pkg.github.com/sre-0/flux-audiovisualizer")
+                      credentials {
+                          username = providers.gradleProperty("gpr.user").orNull
+                          password = providers.gradleProperty("gpr.key").orNull
+                      }
+                  }
+              }
+          }
+
+          Step 2 - Add the dependency to your build.gradle.kts:
+
+          dependencies {
+              implementation("com.sre404.audiovisualizer:flux-audiovisualizer:${{ steps.version.outputs.version }}")
+          }
+
+          Step 3 - Add your credentials to ~/.gradle/gradle.properties (never commit this file):
+
+          gpr.user=YOUR_GITHUB_USERNAME
+          gpr.key=YOUR_GITHUB_PERSONAL_ACCESS_TOKEN
+
+          The token needs the read:packages scope.
+          Generate it at: GitHub Settings > Developer settings > Personal access tokens
+
+          ### Option 2 - Manual AAR import
+
+          1. Download flux-audiovisualizer-${{ steps.version.outputs.version }}.aar
+          2. Copy it to your app libs/ folder
+          3. Add to your build.gradle.kts:
+
+          dependencies {
+              implementation(files("libs/flux-audiovisualizer-${{ steps.version.outputs.version }}.aar"))
+          }
+
+          ### Commit
+          ${{ github.sha }}
+          NOTES
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
