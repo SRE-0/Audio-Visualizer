@@ -2,8 +2,12 @@ jdk:
   - openjdk17
 
 before_install:
-  - sdk install java 17.0.0-open
+  - export JAVA_HOME_17=$JAVA_HOME
+  - sdk install java 11.0.11-open || true
+  - sdk use java 11.0.11-open
+  - echo "y" | sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
+  - sdk use java 17.0.12-oracle
+  - export JAVA_HOME=$JAVA_HOME_17
 
 install:
-  - echo "y" | sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
-  - ./gradlew :audiovisualizer:assembleRelease
+  - ./gradlew :audiovisualizer:assembleRelease --no-daemon
