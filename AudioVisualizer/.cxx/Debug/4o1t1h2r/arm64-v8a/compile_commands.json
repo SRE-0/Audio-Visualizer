@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/sre404/AndroidStudioProjects/Visualizer/AudioVisualizer/.cxx/Debug/4o1t1h2r/arm64-v8a",
+  "command": "/home/sre404/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android24 --sysroot=/home/sre404/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Daudio_processor_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -O2 -fno-limit-debug-info  -fPIC -o CMakeFiles/audio_processor.dir/audio_processor.cpp.o -c /home/sre404/AndroidStudioProjects/Visualizer/AudioVisualizer/src/main/cpp/audio_processor.cpp",
+  "file": "/home/sre404/AndroidStudioProjects/Visualizer/AudioVisualizer/src/main/cpp/audio_processor.cpp"
+}
+]
