@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Custom XML attributes for BarVisualizerView.
+        All attributes are optional — defaults are applied when not specified.
+    -->
+    <declare-styleable name="BarVisualizerView">
+
+        <!-- Number of frequency/volume bars to render. Default: 32 -->
+        <attr name="barCount" format="integer" />
+
+        <!-- Bar color used when colorMode is "solid". Default: Color.CYAN -->
+        <attr name="solidColor" format="color" />
+
+        <!--
+            Color rendering mode.
+            0 = solid (single color), 1 = rainbow (animated hue shift).
+            Default: rainbow
+        -->
+        <attr name="colorMode" format="enum">
+            <enum name="solid"   value="0" />
+            <enum name="rainbow" value="1" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>

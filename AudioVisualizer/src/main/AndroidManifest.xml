@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        RECORD_AUDIO is required for both microphone capture and
+        Android Visualizer API (system audio).
+        The consuming app must request this permission at runtime.
+    -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!--
+        MODIFY_AUDIO_SETTINGS is required to attach the Visualizer
+        to the global audio session (session ID = 0).
+    -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+</manifest>
