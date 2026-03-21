@@ -4,10 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "com.sre-0.audiovisualizer"
+    namespace = "com.sre404.audiovisualizer"
 
     // compileSdk with preview API syntax requires AGP 8.7+
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
