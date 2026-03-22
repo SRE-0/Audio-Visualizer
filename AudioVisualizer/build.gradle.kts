@@ -9,7 +9,6 @@ android {
 
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
@@ -46,7 +45,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    // Required so maven-publish can locate the release component
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -64,11 +62,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-// -----------------------------------------------------------------------
-// Minimal Maven publishing block — only needed so JitPack can find
-// the POM and register the artifact in its Maven repository.
-// No credentials or repository URL needed here.
-// -----------------------------------------------------------------------
 afterEvaluate {
     publishing {
         publications {
