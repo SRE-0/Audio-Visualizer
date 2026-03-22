@@ -22,7 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Visualizer"
+rootProject.name = "audiovisualizer"
 include(":app")
-include(":app:visualizer")
 include(":AudioVisualizer")

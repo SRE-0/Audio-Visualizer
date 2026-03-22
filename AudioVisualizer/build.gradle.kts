@@ -1,5 +1,7 @@
 plugins {
+
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     id("maven-publish")
 }
 
@@ -12,13 +14,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
-        }
-
         externalNativeBuild {
             cmake {
-                cppFlags += "-O3 -std=c++17"
+                cppFlags += "-std=c++17"
+                // Build for all common ABIs so the AAR works on
+                // any device. Remove arm64-v8a only if you want
+                // a smaller artifact for testing.
+                abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
             }
         }
     }
@@ -41,8 +43,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     publishing {
