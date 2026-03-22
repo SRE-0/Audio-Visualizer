@@ -54,7 +54,7 @@ jobs:
           echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Build release AAR
-        run: ./gradlew :audiovisualizer:assembleRelease --no-daemon --stacktrace
+        run: ./gradlew :AudioVisualizer:assembleRelease --no-daemon --stacktrace
 
       - name: Rename AAR with version
         run: |
@@ -63,7 +63,7 @@ jobs:
             echo "ERROR: No AAR file found"
             exit 1
           fi
-          NEW_NAME="audiovisualizer-${{ steps.version.outputs.version }}.aar"
+          NEW_NAME="AudioVisualizer-${{ steps.version.outputs.version }}.aar"
           cp "${AAR_PATH}" "${NEW_NAME}"
           echo "aar_file=${NEW_NAME}" >> $GITHUB_ENV
 

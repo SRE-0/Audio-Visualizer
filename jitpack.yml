@@ -1,6 +1,5 @@
 jdk:
   - openjdk17
 
-
 install:
-  - ./gradlew :audiovisualizer:publishToMavenLocal
+  - ./gradlew :AudioVisualizer:publishToMavenLocal
